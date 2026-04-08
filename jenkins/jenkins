@@ -1,21 +1,19 @@
 pipeline {
     agent any
-
+    
     tools {
-        maven 'Maven3'
+        maven 'Maven-3.9.14'   // Name configured in Jenkins Global Tool Configuration
+    }
+
+    options {
+        skipStagesAfterUnstable()
     }
 
     stages {
 
-        stage('Checkout') {
-            steps {
-                git 'https://github.com/your-repo/java-maven-app.git'
-            }
-        }
-
         stage('Build') {
             steps {
-                sh 'mvn clean package'
+                sh 'mvn -B -DskipTests clean package'
             }
         }
 
@@ -23,11 +21,16 @@ pipeline {
             steps {
                 sh 'mvn test'
             }
+            post {
+                always {
+                    junit 'target/surefire-reports/*.xml'
+                }
+            }
         }
 
-        stage('Archive') {
+        stage('Deliver') {
             steps {
-                archiveArtifacts artifacts: 'target/*.jar', fingerprint: true
+                sh './jenkins/scripts/deliver.sh'
             }
         }
     }
