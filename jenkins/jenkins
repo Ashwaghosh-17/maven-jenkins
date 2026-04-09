@@ -1,8 +1,9 @@
 pipeline {
     agent any
-    
+
     tools {
-        maven 'Maven-3.9.14'   // Name configured in Jenkins Global Tool Configuration
+        jdk 'JDK-21'            // Java 21 configured in Jenkins
+        maven 'Maven-3.9.14'    // Latest Maven configured in Jenkins
     }
 
     options {
@@ -10,6 +11,13 @@ pipeline {
     }
 
     stages {
+
+        stage('Verify Tools') {
+            steps {
+                sh 'java -version'
+                sh 'mvn -version'
+            }
+        }
 
         stage('Build') {
             steps {
@@ -32,6 +40,15 @@ pipeline {
             steps {
                 sh './jenkins/scripts/deliver.sh'
             }
+        }
+    }
+
+    post {
+        success {
+            echo 'Build completed successfully'
+        }
+        failure {
+            echo 'Build failed'
         }
     }
 }
