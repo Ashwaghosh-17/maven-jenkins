@@ -1,51 +1,43 @@
-pipeline{
-    agent{
+pipeline {
+    agent any
 
-    stages{
-        stage("git chechout"){
-            steps{
-                echo "git pull"
+    tools {
+        maven 'Maven'   // Make sure Maven is configured in Jenkins
+    }
+
+    stages {
+
+        stage('Checkout Code') {
+            steps {
+                git 'https://github.com/your-repo/demo-app.git'
             }
         }
-    }                
-    stages{
-        stage("build code"){
-            steps{
-                echo "code build"
+
+        stage('Build') {
+            steps {
+                sh 'mvn clean compile'
             }
         }
-    }  
-    stages{
-        stage("test"){
-            steps{
-                echo "code testing"
- 
-           }
-        }   
-    }
-     stages{
-        stage("build image"){
-            steps{
-                echo "docker image"
- 
-           }
-        }   
-    }
-     stages{
-        stage("push image"){
-            steps{
-                echo "docker image push to dockerhub repo"
- 
-           }
-        }   
-    }
-    post{
-        success{
-            echo "========pipeline executed successfully ========"
+
+        stage('Test') {
+            steps {
+                sh 'mvn test'
+            }
         }
-        failure{
-            echo "========pipeline execution failed========"
+
+        stage('Package') {
+            steps {
+                sh 'mvn package'
+            }
         }
     }
-  }
-}  
+
+    post {
+        success {
+            echo 'Build Successful ✅'
+        }
+        failure {
+            echo 'Build Failed ❌'
+        }
+    }
+}
