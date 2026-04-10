@@ -1,0 +1,51 @@
+pipeline{
+    agent{
+
+    stages{
+        stage("git chechout"){
+            steps{
+                echo "git pull"
+            }
+        }
+    }                
+    stages{
+        stage("build code"){
+            steps{
+                echo "code build"
+            }
+        }
+    }  
+    stages{
+        stage("test"){
+            steps{
+                echo "code testing"
+ 
+           }
+        }   
+    }
+     stages{
+        stage("build image"){
+            steps{
+                echo "docker image"
+ 
+           }
+        }   
+    }
+     stages{
+        stage("push image"){
+            steps{
+                echo "docker image push to dockerhub repo"
+ 
+           }
+        }   
+    }
+    post{
+        success{
+            echo "========pipeline executed successfully ========"
+        }
+        failure{
+            echo "========pipeline execution failed========"
+        }
+    }
+  }
+}  
